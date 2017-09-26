@@ -16,9 +16,6 @@ const canvas = renderer.canvas;
 document.body.append(canvas);
 canvas.style = "width: 100%; height: 100%;";
 
-renderer.resize();
-window.addEventListener("resize", () => renderer.resize());
-
 const triangle = new VectorShape(
 	[{x: 0, y: 1}, {x: 0, y: 0}, {x: 1, y: 0}],
 	[rgba(1, 0, 0), rgba(0, 1, 0), rgba(0, 0, 1)],
