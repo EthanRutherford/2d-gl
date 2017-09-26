@@ -1,0 +1,22 @@
+{
+  "name": "2d-gl",
+  "version": "1.0.0",
+  "description": "simple extensible 2D rendering library",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "dependencies": {
+    "gl-matrix": "^2.4.0"
+  },
+  "devDependencies": {
+    "pre-req": "^1.4.6"
+  },
+  "scripts": {
+    "build": "preload build",
+    "start": "start http-server ../"
+  },
+  "author": "Ethan Rutherford",
+  "license": "ISC"
+}

@@ -1,0 +1,10 @@
+{
+	"webroot": "../",
+	"outputDir": "./test",
+	"entryPoints": ["/2d-gl/test/main"],
+	"html": [{
+		"main": "/2d-gl/test/main",
+		"html": "/2d-gl/test/index.html",
+		"template": "./test/.template.html"
+	}]
+}
