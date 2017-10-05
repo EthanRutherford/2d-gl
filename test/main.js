@@ -36,11 +36,11 @@ function render() {
 render();
 
 const loader = new ImageLoader();
-loader.loadImage("crate", "./crate.png").then((result) => {
+loader.get("crate", "./crate.png").then((result) => {
 	const crateShape = new SpriteShape(
 		[{x: 0, y: 1}, {x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}],
 		[{x: 0, y: 1}, {x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}],
-		result.img,
+		result,
 	);
 
 	const crate = renderer.getInstance(crateShape);
@@ -48,3 +48,7 @@ loader.loadImage("crate", "./crate.png").then((result) => {
 
 	scene.add(crate);
 });
+
+loader.onProgress = (progress) => {
+	console.log(`${progress * 100}% loaded`);
+};
