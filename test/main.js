@@ -84,7 +84,7 @@ loader.onProgress = (progress) => {
 	console.log(`${progress * 100}% loaded`);
 };
 
-//toggle blur shader
+// toggle blur shader
 let blurOn = true;
 window.addEventListener("keydown", (event) => {
 	if (event.key === "d") {
