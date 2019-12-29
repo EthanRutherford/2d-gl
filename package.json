@@ -16,7 +16,7 @@
   "scripts": {
     "build": "preload build",
     "rebuild": "preload rebuild",
-    "start": "start http-server ../"
+    "start": "start http-server ../ -p 8090"
   },
   "author": "Ethan Rutherford",
   "license": "ISC"
