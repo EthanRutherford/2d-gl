@@ -8,10 +8,12 @@
     "test": "test"
   },
   "dependencies": {
-    "gl-matrix": "^2.4.0"
+    "gl-matrix": "^2.8.1"
   },
   "devDependencies": {
-    "pre-req": "^1.4.6"
+    "@rutherford/eslint-config": "^1.0.3",
+    "eslint": "^6.8.0",
+    "pre-req": "^1.4.7"
   },
   "scripts": {
     "build": "preload build",
