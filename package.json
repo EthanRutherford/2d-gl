@@ -1,11 +1,10 @@
 {
   "name": "2d-gl",
-  "version": "1.3.4",
+  "version": "1.4.0",
   "description": "simple extensible 2D rendering library",
   "main": "lib/2d-gl.js",
   "directories": {
-    "lib": "lib",
-    "test": "test"
+    "lib": "lib"
   },
   "dependencies": {
     "gl-matrix": "^2.8.1"

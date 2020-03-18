@@ -1,17 +1,17 @@
 (() => {
-	//Regex for getting preload directives
+	// Regex for getting preload directives
 	const preloadRegex = /\/\/#[ \t]+preload[ \t]+(\S*)/g;
-	//virtual filesystem
+	// virtual filesystem
 	const cache = {files: {}, packages: {}, outputDir: "/"};
-	//symbols
+	// symbols
 	const sDeps = "/deps";
 	const sCode = "/code";
 	const sSheet = "/sheet";
 	const sModule = "/module";
 	const sPromise = "/promise";
-	//css loader
+	// css loader
 	let cssLoader = (sheet) => sheet;
-	//add a path to the virtual filesystem
+	// add a path to the virtual filesystem
 	function addPath(data, pathName) {
 		pathName = pathName.substr(1);
 		if (pathName === "") return data;
@@ -24,7 +24,7 @@
 		}
 		return data;
 	}
-	//get path from the virtual filesystem
+	// get path from the virtual filesystem
 	function getPath(data, pathName) {
 		pathName = pathName.substr(1);
 		if (pathName === "") return data;
@@ -37,7 +37,7 @@
 		}
 		return data;
 	}
-	//merge two objects (naive, assumes nothing more complex than JSON)
+	// merge two objects (naive, assumes nothing more complex than JSON)
 	function merge(target, source) {
 		if (!(target instanceof Object)) {
 			return source;
@@ -54,18 +54,18 @@
 		}
 		return target;
 	}
-	//determine if path is a package path
+	// determine if path is a package path
 	function isPackage(name) {
 		return !(name[0] === "/" || name.startsWith("./") || name.startsWith("../"));
 	}
-	//call to parse urls
+	// call to parse urls
 	function parseUrl(src, relativeTo) {
-		//create a url out of the source
+		// create a url out of the source
 		const url = new URL(src, this.location.origin + (relativeTo || ""));
-		//return the pathname
+		// return the pathname
 		return url.pathname;
 	}
-	//reads the source for any preload directives
+	// reads the source for any preload directives
 	function getDependencies(code) {
 		const deps = [];
 		let match;
@@ -75,38 +75,38 @@
 		}
 		return deps;
 	}
-	//creates a new function which only has access to global scope
+	// creates a new function which only has access to global scope
 	function getModuleExecutor(code, src, basename) {
 		const sourceUrl = (basename ? `preload://modules/${basename}` : location.origin) + src;
 		if (code[code.length - 1] !== "\n") code += "\n";
-		//stringify the source, adding the sourceURL for debugging
+		// stringify the source, adding the sourceURL for debugging
 		code = JSON.stringify(`${code}//# sourceURL=${sourceUrl}`).slice(1, -1);
-		//create the code which creates the module executor
+		// create the code which creates the module executor
 		code = `return eval("(require, module, exports) => {\\n${code}\\n}");`;
-		//use the Function constructor to escape to global scope
-		//and return the constructed executor
+		// use the Function constructor to escape to global scope
+		// and return the constructed executor
 		return new Function(code)();
 	}
-	//executes the code, and sets module exports
+	// executes the code, and sets module exports
 	function execute(code, src, obj, pack) {
-		//initialize the module object
+		// initialize the module object
 		const moduleProxy = {};
 		Object.defineProperty(moduleProxy, "exports", {
 			get: () => obj[sModule],
 			set: (value) => obj[sModule] = value,
 		});
-		//create the executor
+		// create the executor
 		const executor = getModuleExecutor(code, src, pack.name);
-		//construct and execute the function
+		// construct and execute the function
 		executor((dep) => requireCore(dep, src, pack), moduleProxy, moduleProxy.exports);
-		//return module exports
+		// return module exports
 		return moduleProxy.exports;
 	}
-	//call to load the resource
+	// call to load the resource
 	function load(src) {
 		return fetch(new Request(src, {method: "GET"}));
 	}
-	//resolves js, json, or css paths
+	// resolves js, json, or css paths
 	function resolvePath(pack, pathName) {
 		if (
 			!pathName.endsWith(".js") &&
@@ -135,15 +135,15 @@
 		}
 		return {url: pathName, obj: getPath(pack.files, pathName)};
 	}
-	//the core resolver, which returns an object with the resource path, and the cache obj
+	// the core resolver, which returns an object with the resource path, and the cache obj
 	function resolveCore(pack, src, relativeTo) {
 		const url = parseUrl(src, relativeTo);
 		return resolvePath(pack, url);
 	}
-	//the core requirer
+	// the core requirer
 	function requireCore(src, relativeTo, pack = cache) {
 		if (isPackage(src)) {
-			//swap filesystem
+			// swap filesystem
 			const [packname, ...rest] = src.split("/");
 			const file = rest.join("/");
 			pack = cache.packages[packname];
@@ -278,9 +278,9 @@
 			}
 		});
 	}
-	//the core preloader
+	// the core preloader
 	function preloadCore(src, relativeTo, set = new Set()) {
-		//preload a package
+		// preload a package
 		if (isPackage(src)) {
 			const name = src.split("/")[0];
 			if (set.has(name)) return Promise.resolve();
@@ -300,7 +300,7 @@
 		}
 		throw new Error("non-module preloads must specify file type");
 	}
-	//call preloadCore on all, return promise.all
+	// call preloadCore on all, return promise.all
 	function preloadAll(array, relativeTo, set) {
 		if (!array) {
 			return Promise.resolve();
@@ -308,39 +308,39 @@
 		const promises = array.map((item) => preloadCore(item, relativeTo, set));
 		return Promise.all(promises);
 	}
-	//you can use this to pre-define a virtual filesystem with dependencies
-	//doing so can serve as an optimization, as you can begin fetching dependencies
-	//while fetching the module itself instead of needing to wait for it
+	// you can use this to pre-define a virtual filesystem with dependencies
+	// doing so can serve as an optimization, as you can begin fetching dependencies
+	// while fetching the module itself instead of needing to wait for it
 	const define = (input) => {
 		merge(cache, input);
 	};
-	//external main loader, which exports to preload.main
-	//this loads dependencies and begins execution, it does not return a value
+	// external main loader, which exports to preload.main
+	// this loads dependencies and begins execution, it does not return a value
 	const main = (src) => {
-		//preload everything, then execute the main module
-		//this will then execute its dependencies as it comes to them
+		// preload everything, then execute the main module
+		// this will then execute its dependencies as it comes to them
 		preloadCore(src, this.location.pathname).then(() => {
-			//call the worker function, with relativeTo set to current location
+			// call the worker function, with relativeTo set to current location
 			requireCore(src, this.location.pathname);
 		});
 	};
-	//external require function, which exports to preload.require
-	//this behaves differently than the module requirer; it returns
-	//a promise which resolves to the module's exports
+	// external require function, which exports to preload.require
+	// this behaves differently than the module requirer; it returns
+	// a promise which resolves to the module's exports
 	const require = (src) => {
 		return preloadCore(src, this.location.pathname).then(() => {
 			return requireCore(src, this.location.pathname);
 		});
 	};
-	//method which provides support for defining a css loader
-	//the loader function should accept a cssStyleSheet object and url,
-	//and return an object which will be passed into dependent js code
+	// method which provides support for defining a css loader
+	// the loader function should accept a cssStyleSheet object and url,
+	// and return an object which will be passed into dependent js code
 	const onCss = (loader) => {
 		cssLoader = loader;
 	};
-	//add a definition for global
+	// add a definition for global
 	this.global = this;
-	//export the module to this.preload
+	// export the module to this.preload
 	this.preload = {define, main, require, onCss};
 })();
 

@@ -11,6 +11,7 @@ const {
 	},
 	shaders: {
 		MotionBlur,
+		BackgroundShader,
 	},
 } = require("../lib/2d-gl.js");
 
@@ -26,6 +27,39 @@ const camera = new OrthoCamera(0, 0, 10);
 
 const blurShader = renderer.createShader(MotionBlur);
 scene.addPostProcShader(blurShader);
+
+class SpaceBgShader extends BackgroundShader {
+	constructor(gl) {
+		super(gl, `
+			varying highp vec2 vWorld;
+		
+			highp float rand(vec2 co) {
+				highp float a = 12.9898;
+				highp float b = 78.233;
+				highp float c = 43758.5453;
+				highp float dt = dot(co.xy, vec2(a, b));
+				highp float sn = mod(dt, 3.14);
+				return fract(sin(sn) * c);
+			}
+		
+			void main() {
+				highp vec2 xy = vWorld * 20.0;
+				highp vec2 rxy = floor(xy + .5);
+				highp float r = rand(rxy);
+		
+				if (r > .999) {
+					highp float str = 1.0 - distance(xy, rxy) * 2.0;
+					gl_FragColor = vec4(str, str, str, 1);
+				} else {
+					gl_FragColor = vec4(0, 0, 0, 1);
+				}
+			}
+		`);
+	}
+}
+
+const backgroundShader = renderer.createShader(SpaceBgShader);
+scene.setBackgroundShader(backgroundShader);
 
 const triangleShape = new Shape(
 	[{x: 0, y: 1}, {x: 0, y: 0}, {x: 1, y: 0}],
@@ -95,6 +129,21 @@ window.addEventListener("keydown", (event) => {
 		}
 
 		blurOn = !blurOn;
+	}
+	if (event.key === "ArrowUp") {
+		camera.y += .1;
+	}
+	if (event.key === "ArrowDown") {
+		camera.y -= .1;
+	}
+	if (event.key === "ArrowLeft") {
+		camera.x -= .1;
+	}
+	if (event.key === "ArrowRight") {
+		camera.x += .1;
+	}
+	if (event.key === "0") {
+		camera.x = camera.y = 0;
 	}
 });
 
