@@ -73,18 +73,26 @@ scene.add(triangle);
 
 let aCrate;
 
+let limit = false;
+let limitTicker = 1;
 function render(stamp) {
 	window.requestAnimationFrame(render);
 	const time = stamp / 120;
 
+	if (limit && limitTicker !== 10) {
+		limitTicker++;
+		return;
+	}
+
 	if (aCrate) {
-		const sin = Math.sin(time);
+		const sin = Math.sin(time / limitTicker);
 		aCrate.x = sin * 5;
 		aCrate.r = -sin;
 	}
 
-	triangle.r = time;
+	triangle.r = time / limitTicker;
 	renderer.render(camera, scene);
+	limitTicker = 1;
 }
 
 render(performance.now());
@@ -121,6 +129,9 @@ loader.onProgress = (progress) => {
 // toggle blur shader
 let blurOn = true;
 window.addEventListener("keydown", (event) => {
+	if (event.key === "l") {
+		limit = !limit;
+	}
 	if (event.key === "d") {
 		if (blurOn) {
 			scene.removePostProcShader(blurShader);
