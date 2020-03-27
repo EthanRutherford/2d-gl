@@ -68,12 +68,26 @@ const triangleMaterial = new VectorMaterial(
 	[rgba(1, 0, 0), rgba(0, 1, 0), rgba(0, 0, 1)],
 );
 
+const twoTrisShape = new Shape(
+	[{x: 0, y: 1}, {x: 0, y: 0}, {x: 1, y: 0}, {x: .5, y: .5}, {x: 1, y: 0}, {x: 1, y: .5}],
+	Shape.triangles,
+);
+const twoTrisMaterial = new VectorMaterial(
+	[rgba(1, 0, 0), rgba(0, 1, 0), rgba(0, 0, 1), rgba(1, 0, 0), rgba(0, 1, 0), rgba(0, 0, 1)],
+);
+
 const triangle = renderer.getInstance(triangleShape, triangleMaterial);
 const subTriangle = renderer.getInstance(triangleShape, triangleMaterial);
 triangle.getChildren = () => [subTriangle];
 subTriangle.x = 1;
 
 scene.add(triangle);
+
+
+const twoTris = renderer.getInstance(twoTrisShape, twoTrisMaterial);
+twoTris.x = -4;
+scene.add(twoTris);
+
 
 let aCrate;
 
