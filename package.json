@@ -1,6 +1,6 @@
 {
   "name": "2d-gl",
-  "version": "1.7.5",
+  "version": "1.8.0",
   "description": "simple extensible 2D rendering library",
   "main": "lib/2d-gl.js",
   "directories": {
