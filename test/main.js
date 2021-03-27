@@ -65,7 +65,7 @@ const triangleShape = new Shape(
 	[{x: 0, y: 1}, {x: 0, y: 0}, {x: 1, y: 0}],
 );
 const triangleMaterial = new VectorMaterial(
-	[rgba(1, 0, 0), rgba(0, 1, 0), rgba(0, 0, 1)],
+	[rgba(1, 0, 0), rgba(0, 1, 0), rgba(0, 0, 1, .2)],
 );
 
 const twoTrisShape = new Shape(
@@ -80,6 +80,7 @@ const triangle = renderer.getInstance(triangleShape, triangleMaterial);
 const subTriangle = renderer.getInstance(triangleShape, triangleMaterial);
 triangle.getChildren = () => [subTriangle];
 subTriangle.x = 1;
+subTriangle.zIndex = 1;
 
 scene.add(triangle);
 
