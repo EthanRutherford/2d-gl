@@ -33,7 +33,7 @@ class SpaceBgShader extends BackgroundShader {
 		super(gl, `
 			varying highp vec2 vWorld;
 		
-			highp float rand(vec2 co) {
+			highp float rand(highp vec2 co) {
 				highp float a = 12.9898;
 				highp float b = 78.233;
 				highp float c = 43758.5453;
